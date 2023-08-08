@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "guitar-book"
+version = "0.1.0"
+description = "guitar book"
+authors = ["AlexGazagnes"]
+license = "GNU GPLv3"
+readme = "README.md"
+packages = [{include = "guitar_book"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.31.0"
+sqlalchemy = "^2.0.19"
+bs4 = "^0.0.1"
+selenium = "^4.11.2"
+mypy = "^1.4.1"
+coverage = "^7.2.7"
+pylint = "^2.17.5"
+pandas = "^2.0.3"
+jupyter = "^1.0.0"
+notebook = "^7.0.2"
+ipython = "^8.14.0"
+black = "^23.7.0"
+pandarallel = "^1.6.5"
+scrapy = "^2.10.0"
+redis = "^4.6.0"
+asyncio = "^3.4.3"
+googlesearch-python = "^1.2.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

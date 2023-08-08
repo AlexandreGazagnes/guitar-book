@@ -17,7 +17,7 @@ mypy = "^1.4.1"
 coverage = "^7.2.7"
 pylint = "^2.17.5"
 pandas = "^2.0.3"
-jupyter = "^1.0.0"
+jupyter = {extras = ["black"], version = "^1.0.0"}
 notebook = "^7.0.2"
 ipython = "^8.14.0"
 black = "^23.7.0"

@@ -14,6 +14,7 @@ class Loader:
         self,
         website: str = "boiteachansons",
         nan_url: str = None,
+        not_processed: str = "only",
         top: int = 10,
     ) -> pd.DataFrame:
         """load base csv file
@@ -34,8 +35,9 @@ class Loader:
             - df: pd.DataFrame of database base.csv
         """
 
-        assert nan_url in ["", None, 0, False, "keep", "drop"]
-
+        assert nan_url in ["", None, 0, False, "only", "drop"]
+        assert not_processed in ["", None, 0, False, "only", "drop"]
+        assert website in ["boiteachansons", ""]
         source = os.path.join(os.getcwd(), "data")
         fn = os.path.join(source, "base.csv")
 
@@ -44,28 +46,31 @@ class Loader:
         except Exception as e:
             raise e
 
-        logging.info(f"df.shape loaded : {df.shape}")
+        logging.info(f"df.shape source loaded : {df.shape}")
 
         # select website
         if website:
             df = df.loc[df.website == website]
+        logging.info(f"df.shape after {website}: {df.shape}")
 
-        logging.info(f"df.shape  after website: {df.shape}")
-
-        if nan_url == "drop":
-            df = df.loc[df.url.notna()]
-
-        logging.info(f"df.shape after nan_url == drop: {df.shape}")
-
-        if nan_url == "keep":
+        # keep only where url is nan
+        if nan_url == "only":
             df = df.loc[df.url.isna()]
+        # drop where url is nan
+        elif nan_url == "drop":
+            df = df.loc[df.url.notna()]
+        logging.info(f"df.shape after nan_url == {nan_url}: {df.shape}")
 
-        logging.info(f"df.shape after nan_url == keep: {df.shape}")
+        df.processed = df.processed.fillna(0).astype(int)
+        if not_processed == "only":  # only not processed
+            df = df.loc[df.processed < 1]
+        elif not_processed == "drop":  # drop not processed :
+            df = df.loc[df.processed > 0]
+        logging.info(f"df.shape after not_processed == {not_processed}: {df.shape}")
 
         top = int(top) if top else -1
         if top > 0:
             df = df.iloc[:top]
-
         logging.info(f"df.shape after top {top} : {df.shape}")
 
         return df

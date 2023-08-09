@@ -34,17 +34,19 @@ class HelperManager:
         """helper function to decore a  UrlFinder.song_tab(i) call"""
 
         try:
-            ans = UrlFinder.song.tab(i)
-            if len(ans):
-                return ans[0]
-
-            logging.error()
-            logging.error(f"emplty list {ans} => {i} ")
-            return ""
-
+            ans = UrlFinder.song.robust_tab(i)
         except Exception as e:
             logging.error(f"{e} => {i} ")
             return ""
+
+        if not ans["status"] == 200:
+            ans = (
+                f"{ans['status']} - {ans['comment']} - {ans['_query']} - {ans['time']}"
+            )
+            logging.error(ans)
+            return ""
+
+        return ans["url_list"][0]
 
     @classmethod
     def _prepare(self, df, key):
@@ -70,7 +72,7 @@ class HelperManager:
                 df.loc[df["id"] == int(k), dest_key] = v
 
             except Exception as e:
-                print(e)
+                raise e
 
         df.to_csv(fn, index=False)
 
@@ -97,6 +99,7 @@ class AuthorManager:
         website: str = "boiteachansons",
         author_notna: str = "drop",
         nan_url: str = "drop",
+        not_processed: str = "drop",
         top=10,
     ) -> pd.DataFrame:
         """load data base using params and create __query column"""
@@ -202,17 +205,29 @@ class UrlManager:
         self,
         website="boiteachansons",
         nan_url="keep",
-        top=10,
+        not_processed="only",
+        top=0,
     ):
         """load data base using params and create __query column"""
 
         logging.debug("UrlManager._load_base")
 
-        df = Loader.base(website=website, nan_url=nan_url, top=top)
+        df = Loader.base(
+            website=website,
+            nan_url=nan_url,
+            top=top,
+            not_processed=not_processed,
+        )
 
+        # author
         df.author.fillna("", inplace=True)
+
+        # __query
         df["__query"] = df.song + " " + df.author
         df["__query"] = df["__query"].str.strip()
+        df["__query"] = df["__query"].apply(
+            lambda i: i.replace("  ", " ").replace("  ", " ")
+        )
 
         return df
 
@@ -226,15 +241,18 @@ class UrlManager:
 
         logging.debug("UrlManager._scrap_urls")
 
-        df = df.copy()
-        df["__url"] = df["__query"].apply(
-            lambda i: HelperManager._finder_url_manager(i)
-        )
+        _df = df.copy()
 
-        # df["__url"] = df["__query"].parallel_apply(lambda i : _app(i))
-        # df["__url"] = df["__query"].apply(_app)
+        if not asynch:
+            _df["__url"] = _df["__query"].apply(
+                lambda i: HelperManager._finder_url_manager(i)
+            )
+        else:
+            _df["__url"] = _df["__query"].parallel_apply(
+                lambda i: HelperManager._finder_url_manager(i)
+            )
 
-        return df
+        return _df
 
     @classmethod
     def _prepare_list_dict(self, df):
@@ -255,8 +273,8 @@ class UrlManager:
         self,
         li: list,
         fn: str = "./data/base.csv",
-        top: int = 10,
-        n_sample: int = -1,
+        top: int = 10,  # to delete
+        n_sample: int = -1,  # to delete
     ):
         """reload a entier base and update id / _url if neeeded, save final"""
 

@@ -23,7 +23,8 @@ class ThreadManager:
         for i in range(self.timeout + 2):
             logging.debug(f"round {i}")
             if self.results:
-                logging.info(f"{self.t0._is_stopped}")
+                logging.debug(f"{self.t0._is_stopped}")
+                logging.debug(self.results)
                 return self.results
             time.sleep(1)
 

@@ -4,7 +4,9 @@ import sqlalchemy
 import sqlalchemy as db
 
 
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import DeclarativeBase
+
+
 from typing import List
 from typing import Optional
 
@@ -13,8 +15,6 @@ from sqlalchemy import Table, Column, Integer, String, Date, Text
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-
-from sqlalchemy.orm import DeclarativeBase
 
 
 class Base(DeclarativeBase):
@@ -43,8 +43,13 @@ class User(Base):
 # Create an SQLite database named "db.sqlite3"
 cwd = os.getcwd()
 fn = "db.sqlite3"
-db = os.path.join(cwd, fn)
-database_url = f"sqlite:////{db}"
+
+# url = f"{cwd}/{fn}"
+
+url = os.path.join(cwd, fn)
+
+# db = os.path.join(cwd, fn)
+database_url = f"sqlite:///{url}"
 
 
 engine = create_engine(database_url)

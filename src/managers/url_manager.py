@@ -1,15 +1,22 @@
 """
 UrlManager : scrap url from song /author + tab + webiste google search
 """
-import pandas as pd
-import requests
-from src.loaders import Loader
-from src.scrappers import UrlFinder
-from src.helpers import now
+
 import os, sys, time, logging
 
+import pandas as pd
+
+
+from src.loaders import Loader
+from src.url_finders import UrlFinder
+from src.scrappers import Scrapper
+from src.helpers import now
+
+from src.managers.helpers import HelperManager
+from src.extractors import Extractor
+
+# import requests
 # from src.cleaners import clean_author_from_url
-from src.extractors import extract_author_from_url, extract_song_from_url
 
 
 class UrlManager:

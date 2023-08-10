@@ -1,27 +1,20 @@
 """
-All class and function need to acces internet to search, download scrap
 """
 
 import requests
 import logging
-import time
 
-import bs4
-from bs4 import BeautifulSoup
 from googlesearch import search
 
-import selenium
 from src.helpers import now
 
 # import logging
-
-import threading
+# import time
+# from bs4 import BeautifulSoup
 
 # import time
 # from googlesearch import search
-
-from src.threaders import ThreadManager
-from src.helpers import now
+# from src.threaders import ThreadManager
 
 
 class SongVideoScrapper:

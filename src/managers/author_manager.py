@@ -5,12 +5,12 @@ Author Manager : extract author based on url
 import pandas as pd
 import requests
 from src.loaders import Loader
-from src.scrappers import UrlFinder
+from src.url_finders import UrlFinder
 from src.helpers import now
 import os, sys, time, logging
 
 # from src.cleaners import clean_author_from_url
-from src.extractors import extract_author_from_url, extract_song_from_url
+from src.extractors import Extractor
 
 
 class AuthorManager:

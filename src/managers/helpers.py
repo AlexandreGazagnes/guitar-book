@@ -1,3 +1,12 @@
+import logging
+from typing import Callable
+
+
+from src.url_finders import UrlFinder
+
+from src.loaders import Loader
+
+
 class HelperManager:
     """ """
 
@@ -18,9 +27,12 @@ class HelperManager:
     def _finder_url_manager(self, i: str) -> str:
         """helper function to decore a  UrlFinder.song_tab(i) call"""
 
+        # f should be UrlFinder.song.robust_tab
+
         try:
             ans = UrlFinder.song.robust_tab(i)
         except Exception as e:
+            logging.error(ans)
             logging.error(f"{e} => {i} ")
             return ""
 

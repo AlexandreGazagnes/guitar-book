@@ -35,8 +35,8 @@ class Loader:
             - df: pd.DataFrame of database base.csv
         """
 
-        assert nan_url in ["", None, 0, False, "only", "drop"]
-        assert not_processed in ["", None, 0, False, "only", "drop"]
+        assert nan_url in ["", None, 0, False, "only", "drop", "ignore"]
+        assert not_processed in ["", None, 0, False, "only", "drop", "ignore"]
         assert website in ["boiteachansons", ""]
         source = os.path.join(os.getcwd(), "data")
         fn = os.path.join(source, "base.csv")

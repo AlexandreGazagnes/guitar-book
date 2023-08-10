@@ -1,10 +1,11 @@
-def clean_author_from_url(i):
+def clean_author_song_from_url(url: str) -> str:
     """ """
 
-    i = i.replace("-", " ")
-    i = i.lower().strip()
+    url = url.replace("-", " ")
+    url = url.replace(".html", "")
+    url = url.lower().strip().replace("  ", " ").replace("  ", " ").strip()
 
-    return i
+    return url
 
 
 def clean_chords_txt(i):

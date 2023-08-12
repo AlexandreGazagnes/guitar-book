@@ -24,16 +24,20 @@ class HelperManager:
         return df
 
     @classmethod
-    def _finder_url_manager(self, i: str) -> str:
+    def _finder_url_manager(
+        self,
+        query: str,
+        website: str,
+    ) -> str:
         """helper function to decore a  UrlFinder.song_tab(i) call"""
 
         # f should be UrlFinder.song.robust_tab
 
         try:
-            ans = UrlFinder.song.robust_tab(i)
+            ans = UrlFinder.song.robust_tab(query, website=website)
         except Exception as e:
             logging.error(ans)
-            logging.error(f"{e} => {i} ")
+            logging.error(f"{e} => {query} website {website}")
             return ""
 
         if not ans["status"] == 200:

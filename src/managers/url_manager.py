@@ -36,7 +36,7 @@ class UrlManager:
     @classmethod
     def _load_base(
         self,
-        website="boiteachansons",
+        website: str,
         nan_url="keep",
         not_processed="only",
         top=0,
@@ -44,6 +44,25 @@ class UrlManager:
         """load data base using params and create __query column"""
 
         logging.debug("UrlManager._load_base")
+
+        website_list = [
+            "ultimate",
+            "ultimate-guitar",
+            "ultimateguitar",
+            "boiteachansons",
+            "boite",
+            "bac",
+            None,
+            0,
+            False,
+            "",
+        ]
+        if isinstance(website, str):
+            website = website.lower()
+        if not website.lower() in website_list:
+            raise AttributeError(
+                f"website {website} not in website_list {website_list}"
+            )
 
         df = Loader.base(
             website=website,
@@ -67,10 +86,24 @@ class UrlManager:
     @classmethod
     def _scrap_urls(
         self,
+        website: str,
         df: pd.DataFrame,
         asynch: bool = False,
     ):
         """scrap url with finder_url_manager"""
+
+        website_list = [
+            "ultimate",
+            "ultimate-guitar",
+            "ultimateguitar",
+            "boiteachansons",
+            "boite",
+            "bac",
+        ]
+        if not website.lower() in website_list:
+            raise AttributeError(
+                f"website {website} not in website_list {website_list}"
+            )
 
         logging.debug("UrlManager._scrap_urls")
 
@@ -78,11 +111,14 @@ class UrlManager:
 
         if not asynch:
             _df["__url"] = _df["__query"].apply(
-                lambda i: HelperManager._finder_url_manager(i)
+                lambda query: HelperManager._finder_url_manager(
+                    query,
+                    website=website,
+                )
             )
         else:
             _df["__url"] = _df["__query"].parallel_apply(
-                lambda i: HelperManager._finder_url_manager(i)
+                lambda query: HelperManager._finder_url_manager(query, website=we)
             )
 
         return _df
@@ -117,30 +153,30 @@ class UrlManager:
 
         return _df
 
-    @classmethod
-    def run(
-        self,
-        top: int = 10,
-        n_sample: int = -1,
-        verbose: int = 1,
-    ):
-        """load, sample, scrap, prepare and update/save final"""
+    # @classmethod
+    # def run(
+    #     self,
+    #     top: int = 10,
+    #     n_sample: int = -1,
+    #     verbose: int = 1,
+    # ):
+    #     """load, sample, scrap, prepare and update/save final"""
 
-        logging.info("UrlManager.run")
+    #     logging.info("UrlManager.run")
 
-        df = self._load_base(
-            website="",
-            nan_url="keep",
-            top=top,
-        )
+    #     df = self._load_base(
+    #         website="",
+    #         nan_url="keep",
+    #         top=top,
+    #     )
 
-        if not len(df):
-            logging.warning(f"df empty : {len(df)} ")
-            return 0
+    #     if not len(df):
+    #         logging.warning(f"df empty : {len(df)} ")
+    #         return 0
 
-        df = HelperManager._sample(df, n_sample=n_sample)
-        df = self._scrap_urls(df)
-        li = self._prepare_list_dict(df)
-        self._update_and_save(li)
+    #     df = HelperManager._sample(df, n_sample=n_sample)
+    #     df = self._scrap_urls(df)
+    #     li = self._prepare_list_dict(df)
+    #     self._update_and_save(li)
 
-        return 1
+    #     return 1

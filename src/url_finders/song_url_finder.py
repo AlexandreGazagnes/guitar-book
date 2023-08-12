@@ -223,9 +223,9 @@ class SongUrlFinder:
     def tab(
         self,
         song: str,
+        website: str,
         author: str = "",
-        tab: str = "tab",
-        website: str = "boiteachansons",
+        tab: bool = True,
         timeout: int = 15,
         engine="googlesearch-python",
         limit: int = 5,
@@ -234,8 +234,34 @@ class SongUrlFinder:
     ) -> dict:
         """ """
 
-        # lang fr if boiteachansons else com
-        lang = "fr" if "boite" in website else "com"
+        # website_list
+        website_list = [
+            "ultimate",
+            "ultimate-guitar",
+            "ultimateguitar",
+            "boiteachansons",
+            "boite",
+            "bac",
+        ]
+        if not website.lower() in website_list:
+            raise AttributeError(
+                f"website {website} not in website_list {website_list}"
+            )
+
+        # tab
+        tab = int(tab)
+        tab = "tab" if tab else ""
+
+        # manage website
+        if "ultimate" in website.lower():
+            website = "ultimate-guitar"
+
+        if (website.lower() == "bac") or ("boite" in website.lower()):
+            website = "boiteachansons"
+
+        # lang and domain
+        lang = "fr" if "boite" in website else "en"
+        domain = "fr" if "boite" in website else "com"
 
         # build query
         query = _build_query(
@@ -315,12 +341,12 @@ class SongUrlFinder:
             return response
 
         # filter good website
-        _url_list = [i for i in url_list if "boite" in i]
+        _url_list = [i for i in url_list if website in i]
         if not _url_list:
             response = {
                 "url_list": [],
                 "status": 503,
-                "comment": "no boite in url",
+                "comment": f"no website {website} in query {query}",
                 "candidates": url_list,
                 "time": t1,
             }
@@ -328,17 +354,21 @@ class SongUrlFinder:
             return response
 
         # filter good route
-        __url_list = [i for i in _url_list if "partition" in i]
-        if not __url_list:
-            response = {
-                "url_list": [],
-                "status": 504,
-                "comment": "no partition in url",
-                "candidates": url_list,
-                "time": t1,
-            }
-            response.update(dd)
-            return response
+        pattern = "partition" if website == "boiteachansons" else "tab"
+        if pattern:
+            __url_list = [i for i in _url_list if pattern in i]
+            if not __url_list:
+                response = {
+                    "url_list": [],
+                    "status": 504,
+                    "comment": f"no pattern {pattern}  for {website} in query {query}",
+                    "candidates": url_list,
+                    "time": t1,
+                }
+                response.update(dd)
+                return response
+        else:
+            __url_list = _url_list
 
         response = {
             "url_list": __url_list[:limit],
@@ -354,9 +384,9 @@ class SongUrlFinder:
     def robust_tab(
         self,
         song: str,
+        website: str,
         author: str = "",
-        tab: str = "tab",
-        website: str = "boiteachansons",
+        tab: bool = True,
         timeout: int = 15,
         engine="googlesearch-python",
         limit: int = 5,

@@ -10,7 +10,11 @@ class UrlExtractor:
     """ """
 
     @classmethod
-    def author(self, url: str) -> str:
+    def author(
+        self,
+        url: str,
+        website: str,
+    ) -> str:
         """helper function t oextract author from an url
 
         SHOULD BE IN AN EXTRACTOR MODULE
@@ -30,6 +34,9 @@ class UrlExtractor:
             logging.error(f"/ not in url : {url}")
             return ""
 
+        if not (("boite" in website) or ("ultimate" in website)):
+            raise NotImplementedError(f"website not implemented : {website}")
+
         try:
             url = url.split("/")
             url = url[-2]
@@ -42,7 +49,11 @@ class UrlExtractor:
             return ""
 
     @classmethod
-    def song(self, url: str) -> str:
+    def song(
+        self,
+        url: str,
+        website: str,
+    ) -> str:
         """helper function t oextract song from an url
 
         SHOULD BE IN AN EXTRACTOR MODULE
@@ -61,6 +72,9 @@ class UrlExtractor:
         if not "/" in url:
             logging.error(f"/ not in url : {url}")
             return ""
+
+        if not (("boite" in website) or ("ultimate" in website)):
+            raise NotImplementedError(f"website not implemented : {website}")
 
         try:
             url = url.split("/")

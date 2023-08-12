@@ -12,7 +12,7 @@ class Loader:
     @classmethod
     def base(
         self,
-        website: str = "boiteachansons",
+        website: str,
         nan_url: str = None,
         not_processed: str = "only",
         top: int = 10,
@@ -34,6 +34,31 @@ class Loader:
         Returns:
             - df: pd.DataFrame of database base.csv
         """
+
+        website_list = [
+            "ultimate",
+            "ultimate-guitar",
+            "ultimateguitar",
+            "boiteachansons",
+            "boite",
+            "bac",
+            None,
+            0,
+            False,
+            "",
+        ]
+        if isinstance(website, str):
+            website = website.lower()
+        if not website.lower() in website_list:
+            raise AttributeError(
+                f"website {website} not in website_list {website_list}"
+            )
+
+        if website:
+            if "boite" in website:
+                website = "boiteachansons"
+            if "ultimate" in website:
+                website = "ultimate-guitar"
 
         assert nan_url in ["", None, 0, False, "only", "drop", "ignore"]
         assert not_processed in ["", None, 0, False, "only", "drop", "ignore"]

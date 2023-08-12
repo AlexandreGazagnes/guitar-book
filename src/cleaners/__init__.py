@@ -1,8 +1,9 @@
 def clean_author_song_from_url(url: str) -> str:
     """ """
 
-    url = url.replace("-", " ")
+    url = url.replace("-", " ").replace("+", " ")
     url = url.replace(".html", "")
+    url = url.split("-chords-")[0]
     url = url.lower().strip().replace("  ", " ").replace("  ", " ").strip()
 
     return url

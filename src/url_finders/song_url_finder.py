@@ -10,6 +10,7 @@ import time
 # import bs4
 # from bs4 import BeautifulSoup
 from googlesearch import search
+from youtubesearchpython import VideosSearch
 
 # import selenium
 from src.helpers import now
@@ -24,6 +25,37 @@ from src.helpers import now
 from src.url_finders.helpers import ThreadManager
 
 # from src.helpers import now
+
+
+def _build_query(
+    song,
+    website,
+    author: str = "",
+    tab: str = "",
+    live: str = "",
+):
+    # song
+    query = str(song)
+
+    # author
+    if author:
+        query += f" {author}"
+
+    # if tab
+    if tab:
+        query += " tab"
+
+    # if live
+    if live:
+        query += " live"
+
+    # website
+    if website and website != "youtube":
+        query += f" {website}"
+
+    query = query.replace("  ", " ").replace("  ", " ").lower().strip()
+
+    return query
 
 
 class SongUrlFinder:
@@ -42,13 +74,150 @@ class SongUrlFinder:
         author: str = "",
         website: str = "youtube",
         limit: int = 5,
+        timeout=15,
+        live="",
+        engine="youtubesearchpython",
         verbose: int = 1,  # useless
     ) -> list[str]:
         """ """
 
-        logging.critical("NOT IMPLEMENTED")
+        # build query
+        query = _build_query(
+            song=song,
+            website=website,
+            author=author,
+            live=live,
+        )
+        logging.info(f"query : {query}")
 
-        return []
+        # from youtubesearchpython import VideosSearch
+
+        t1 = -1
+        t0 = time.time()
+
+        dd = {
+            "_query": query,
+            "_date": now(),
+            "_timeout": timeout,
+            "_song": song,
+            "_author": author,
+            "_engine": engine,
+            "_website": website,
+            "_live": live,
+            "_limit": limit,
+            "_robust": -1,
+        }
+
+        # search
+        try:
+            search = VideosSearch(query, limit=limit)
+            response = search.result()
+            t1 = round(time.time() - t0, 4)
+        except Exception as e:
+            t1 = round(time.time() - t0, 4)
+
+            response = {
+                "url_list": [],
+                "status": 500,
+                "comment": f"error : {e}",
+                "candidates": [],
+                "time": t1,
+            }
+            response.update(dd)
+            return response
+
+        # results
+        try:
+            results = response["result"]
+            t1 = round(time.time() - t0, 4)
+
+        except Exception as e:
+            t1 = round(time.time() - t0, 4)
+
+            response = {
+                "url_list": [],
+                "status": 501,
+                "comment": f"error : {e}",
+                "candidates": [],
+                "time": t1,
+            }
+            response.update(dd)
+            return response
+
+        if not results:
+            response = {
+                "url_list": [],
+                "status": 502,
+                "comment": "no url found",
+                "candidates": [],
+                "time": t1,
+            }
+            response.update(dd)
+            return response
+
+        url = results[0]["link"]
+
+        response = {
+            "url_list": [url],
+            "status": 200,
+            "comment": "OK",
+            "candidates": [results[i]["link"] for i in range(limit)],
+            "time": t1,
+        }
+        response.update(dd)
+        return response
+
+    @classmethod
+    def robust_video(
+        self,
+        song: str,
+        author: str = "",
+        website: str = "youtube",
+        limit: int = 5,
+        timeout=15,
+        live="",
+        engine="youtubesearchpython",
+        verbose: int = 1,  # useless
+    ) -> list[str]:
+        """ " """
+
+        f = SongUrlFinder.video
+
+        tm = ThreadManager(
+            f,
+            timeout=timeout,
+            song=song,
+            author=author,
+            website=website,
+            engine=engine,
+            limit=limit,
+            live=live,
+        )
+        t0 = time.time()
+
+        try:
+            return tm.run()
+        except Exception as e:
+            t1 = time.time() - t0
+            logging.error(e)
+            return {
+                "url_list": [],
+                "status": 555,
+                "comment": f"{e}",
+                "candidates": [],
+                "time": t1,
+                #
+                "_query": "--no query for robust tab",
+                "_date": now(),
+                "_timeout": timeout,
+                "_song": song,
+                "_author": author,
+                "_live": live,
+                "_engine": engine,
+                "_website": website,
+                "_limit": limit,
+                "_robust": 1,
+            }
 
     @classmethod
     def tab(
@@ -60,6 +229,7 @@ class SongUrlFinder:
         timeout: int = 15,
         engine="googlesearch-python",
         limit: int = 5,
+        live="",
         verbose: int = 1,  # useless
     ) -> dict:
         """ """
@@ -68,23 +238,14 @@ class SongUrlFinder:
         lang = "fr" if "boite" in website else "com"
 
         # build query
-
-        # song
-        q = str(song)
-
-        # author
-        if author:
-            q += f" {author}"
-
-        # if tab
-        if tab:
-            q += " tab"
-
-        # website
-        if website:
-            q += f" {website}"
-
-        logging.info(q)
+        query = _build_query(
+            song=song,
+            website=website,
+            author=author,
+            tab=tab,
+            live=live,
+        )
+        logging.info(f"query : {query}")
 
         # do search
         if not engine == "googlesearch-python":
@@ -94,21 +255,22 @@ class SongUrlFinder:
         t0 = time.time()
 
         dd = {
-            "_query": q,
+            "_query": query,
             "_date": now(),
             "_timeout": timeout,
             "_song": song,
             "_author": author,
             "_tab": tab,
+            "_live": live,
             "_engine": engine,
             "_website": website,
             "_limit": limit,
-            "_robust": 1,
+            "_robust": -1,
         }
 
         # search
         try:
-            li = search(q, lang=lang, num_results=limit, timeout=timeout)
+            li = search(query, lang=lang, num_results=limit, timeout=timeout)
             t1 = round(time.time() - t0, 4)
         except Exception as e:
             t1 = round(time.time() - t0, 4)
@@ -237,7 +399,7 @@ class SongUrlFinder:
                 "_engine": engine,
                 "_website": website,
                 "_limit": limit,
-                "_robust": 0,
+                "_robust": 1,
             }
 
     @classmethod

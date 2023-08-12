@@ -1339,6 +1339,51 @@ traitlets = ">=5.4"
 test = ["flaky", "pexpect", "pytest"]
 
 [[package]]
+name = "jupyter-contrib-core"
+version = "0.4.2"
+description = "Common utilities for jupyter-contrib projects."
+optional = false
+python-versions = "*"
+files = [
+    {file = "jupyter_contrib_core-0.4.2.tar.gz", hash = "sha256:1887212f3ca9d4487d624c0705c20dfdf03d5a0b9ea2557d3aaeeb4c38bdcabb"},
+]
+
+[package.dependencies]
+jupyter_core = "*"
+notebook = ">=4.0"
+setuptools = "*"
+tornado = "*"
+traitlets = "*"
+
+[package.extras]
+testing-utils = ["mock", "nose"]
+
+[[package]]
+name = "jupyter-contrib-nbextensions"
+version = "0.7.0"
+description = "A collection of Jupyter nbextensions."
+optional = false
+python-versions = "*"
+files = [
+    {file = "jupyter_contrib_nbextensions-0.7.0.tar.gz", hash = "sha256:06e33f005885eb92f89cbe82711e921278201298d08ab0d886d1ba09e8c3e9ca"},
+]
+
+[package.dependencies]
+ipython_genutils = "*"
+jupyter_contrib_core = ">=0.3.3"
+jupyter_core = "*"
+jupyter_highlight_selected_word = ">=0.1.1"
+jupyter_nbextensions_configurator = ">=0.4.0"
+lxml = "*"
+nbconvert = ">=6.0"
+notebook = ">=6.0"
+tornado = "*"
+traitlets = ">=4.1"
+
+[package.extras]
+test = ["mock", "nbformat", "nose", "pip", "requests"]
+
+[[package]]
 name = "jupyter-core"
 version = "5.3.1"
 description = "Jupyter core package. A base package on which Jupyter projects rely."
@@ -1384,6 +1429,17 @@ docs = ["jupyterlite-sphinx", "myst-parser", "pydata-sphinx-theme", "sphinxcontr
 test = ["click", "pre-commit", "pytest (>=7.0)", "pytest-asyncio (>=0.19.0)", "pytest-console-scripts", "rich"]
 
 [[package]]
+name = "jupyter-highlight-selected-word"
+version = "0.2.0"
+description = "Jupyter notebook extension that enables highlighting every instance of the current word in the notebook."
+optional = false
+python-versions = "*"
+files = [
+    {file = "jupyter_highlight_selected_word-0.2.0-py2.py3-none-any.whl", hash = "sha256:9545dfa9cb057eebe3a5795604dcd3a5294ea18637e553f61a0b67c1b5903c58"},
+    {file = "jupyter_highlight_selected_word-0.2.0.tar.gz", hash = "sha256:9fa740424859a807950ca08d2bfd28a35154cd32dd6d50ac4e0950022adc0e7b"},
+]
+
+[[package]]
 name = "jupyter-lsp"
 version = "2.2.0"
 description = "Multi-Language Server WebSocket proxy for Jupyter Notebook/Lab server"
@@ -1396,6 +1452,27 @@ files = [
 
 [package.dependencies]
 jupyter-server = ">=1.1.2"
+
+[[package]]
+name = "jupyter-nbextensions-configurator"
+version = "0.6.3"
+description = "jupyter serverextension providing configuration interfaces for nbextensions."
+optional = false
+python-versions = "*"
+files = [
+    {file = "jupyter_nbextensions_configurator-0.6.3-py2.py3-none-any.whl", hash = "sha256:cece496f3f62cf80bb0b04867ea463c32ed5db19ff5814fe18a3a7f1bb9da95b"},
+]
+
+[package.dependencies]
+jupyter-contrib-core = ">=0.3.3"
+jupyter-core = "*"
+notebook = ">=6.0"
+pyyaml = "*"
+tornado = "*"
+traitlets = "*"
+
+[package.extras]
+test = ["jupyter-contrib-core[testing-utils]", "mock", "nose", "requests", "selenium"]
 
 [[package]]
 name = "jupyter-server"
@@ -3665,4 +3742,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5b3f8b81950f97c87b2e6fc4adc619f2376e24a1d577be1f1ddc85fba7ea6617"
+content-hash = "b0218e8a6dc2348f069cc1230e52d9669af1b3870849427b2ee73d0c9942ae7c"

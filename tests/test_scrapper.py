@@ -1,7 +1,7 @@
 import pytest
 
 
-from src.scrappers import UrlFinder
+from src.url_finders import UrlFinder
 
 
 LI = [

@@ -5,10 +5,12 @@ various helpers
 import datetime
 
 
-def now():
+def now(replace_space: bool = "_"):
     """ """
-
-    return str(datetime.datetime.now())[:19]
+    txt = str(datetime.datetime.now())[:19]
+    if replace_space:
+        txt = txt.replace(" ", replace_space)
+    return txt
 
 
 def _from_date_to_generation(date):

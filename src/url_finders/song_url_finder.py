@@ -24,6 +24,9 @@ from src.helpers import now
 
 from src.url_finders.helpers import ThreadManager
 
+from src.validators import Validator
+from src.cleaners import Cleaner
+
 # from src.helpers import now
 
 
@@ -234,30 +237,32 @@ class SongUrlFinder:
     ) -> dict:
         """ """
 
-        # website_list
-        website_list = [
-            "ultimate",
-            "ultimate-guitar",
-            "ultimateguitar",
-            "boiteachansons",
-            "boite",
-            "bac",
-        ]
-        if not website.lower() in website_list:
-            raise AttributeError(
-                f"website {website} not in website_list {website_list}"
-            )
+        website = Cleaner.text.website(with_validation=True, authorise_none=False)
+
+        # # website_list
+        # website_list = [
+        #     "ultimate",
+        #     "ultimate-guitar",
+        #     "ultimateguitar",
+        #     "boiteachansons",
+        #     "boite",
+        #     "bac",
+        # ]
+        # if not website.lower() in website_list:
+        #     raise AttributeError(
+        #         f"website {website} not in website_list {website_list}"
+        #     )
 
         # tab
         tab = int(tab)
         tab = "tab" if tab else ""
 
-        # manage website
-        if "ultimate" in website.lower():
-            website = "ultimate-guitar"
+        # # manage website
+        # if "ultimate" in website.lower():
+        #     website = "ultimate-guitar"
 
-        if (website.lower() == "bac") or ("boite" in website.lower()):
-            website = "boiteachansons"
+        # if (website.lower() == "bac") or ("boite" in website.lower()):
+        #     website = "boiteachansons"
 
         # lang and domain
         lang = "fr" if "boite" in website else "en"

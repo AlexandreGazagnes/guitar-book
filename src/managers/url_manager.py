@@ -18,6 +18,10 @@ from src.extractors import Extractor
 # import requests
 # from src.cleaners import clean_author_from_url
 
+from src.validators import Validator
+
+from src.cleaners import Cleaner
+
 
 class UrlManager:
     """UrlManager : scrap url from song /author + tab + webiste google search
@@ -45,24 +49,9 @@ class UrlManager:
 
         logging.debug("UrlManager._load_base")
 
-        website_list = [
-            "ultimate",
-            "ultimate-guitar",
-            "ultimateguitar",
-            "boiteachansons",
-            "boite",
-            "bac",
-            None,
-            0,
-            False,
-            "",
-        ]
-        if isinstance(website, str):
-            website = website.lower()
-        if not website.lower() in website_list:
-            raise AttributeError(
-                f"website {website} not in website_list {website_list}"
-            )
+        website = Cleaner.txt.webiste(
+            website, with_validation=True, authorise_none=True
+        )
 
         df = Loader.base(
             website=website,
@@ -86,24 +75,15 @@ class UrlManager:
     @classmethod
     def _scrap_urls(
         self,
-        website: str,
         df: pd.DataFrame,
+        website: str,
         asynch: bool = False,
     ):
         """scrap url with finder_url_manager"""
 
-        website_list = [
-            "ultimate",
-            "ultimate-guitar",
-            "ultimateguitar",
-            "boiteachansons",
-            "boite",
-            "bac",
-        ]
-        if not website.lower() in website_list:
-            raise AttributeError(
-                f"website {website} not in website_list {website_list}"
-            )
+        website = Cleaner.txt.website(
+            website, with_validation=True, authorise_none=False
+        )
 
         logging.debug("UrlManager._scrap_urls")
 
@@ -141,15 +121,21 @@ class UrlManager:
     def _update_and_save(
         self,
         li: list,
-        fn: str = "./data/base.csv",
-        top: int = 10,  # to delete
-        n_sample: int = -1,  # to delete
+        website: str,
+        filename: str,
+        path="./data/",
     ):
         """reload a entier base and update id / _url if neeeded, save final"""
 
+        website = Cleaner.txt.website(
+            website, with_validation=True, authorise_none=False
+        )
+
         logging.debug("UrlManager._update_and_save")
 
-        _df = HelperManager._update_save(li, dest_key="url", fn=fn)
+        fn = os.path.join(path, filename)
+
+        _df = HelperManager._update_save(li, dest_key="url", fn=fn, website=website)
 
         return _df
 

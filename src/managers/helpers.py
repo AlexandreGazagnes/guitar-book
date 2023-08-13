@@ -62,7 +62,7 @@ class HelperManager:
         return li
 
     @classmethod
-    def _update_save(self, li, dest_key, fn):
+    def _update_save(self, li, dest_key, fn, website: str = ""):
         """ """
 
         df = Loader.base(website="", nan_url="", top=None)
@@ -71,6 +71,7 @@ class HelperManager:
             try:
                 k, v = dd["id"], dd["key"]
                 df.loc[df["id"] == int(k), dest_key] = v
+                df.loc[df["id"] == int(k), "website"] = website
 
             except Exception as e:
                 raise e

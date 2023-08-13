@@ -3,7 +3,7 @@
 
 import os, logging
 
-from src.cleaners import clean_author_song_from_url
+from src.cleaners import Cleaner
 
 
 class UrlExtractor:
@@ -40,7 +40,7 @@ class UrlExtractor:
         try:
             url = url.split("/")
             url = url[-2]
-            url = clean_author_song_from_url(url)
+            url = Cleaner.url.author_song(url)
             return url
 
         except Exception as e:
@@ -79,7 +79,7 @@ class UrlExtractor:
         try:
             url = url.split("/")
             url = url[-1]
-            url = clean_author_song_from_url(url)
+            url = Cleaner.url.author_song(url)
             return url
 
         except Exception as e:

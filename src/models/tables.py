@@ -194,7 +194,7 @@ class Result(Base):
     filepath: Mapped[str] = mapped_column(String(N_4))
     filename: Mapped = mapped_column(String(N_4))
 
-    human_validation = Mapped[int] = mapped_column(Integer)
+    human_validation: Mapped[int] = mapped_column(Integer)
     retired: Mapped[int] = mapped_column(Integer)
 
     data_type: Mapped[str] = mapped_column(
@@ -226,7 +226,7 @@ class Tab(Base):
     website: Mapped[str] = mapped_column(String(N_2))
     id_version: Mapped[int] = mapped_column(Integer, ForeignKey("version.id_version"))
     # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
-    human_validation = Mapped[int] = mapped_column(Integer)
+    human_validation: Mapped[int] = mapped_column(Integer)
 
     comments: Mapped[str] = mapped_column(String(N_2))
 
@@ -247,6 +247,6 @@ class AudioRecord(Base):
     website: Mapped[str] = mapped_column(String(N_2))
 
     # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
-    human_validation = Mapped[int] = mapped_column(Integer)
+    human_validation: Mapped[int] = mapped_column(Integer)
 
     comments: Mapped[str] = mapped_column(String(N_2))

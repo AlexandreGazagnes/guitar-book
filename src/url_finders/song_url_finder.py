@@ -237,7 +237,9 @@ class SongUrlFinder:
     ) -> dict:
         """ """
 
-        website = Cleaner.text.website(with_validation=True, authorise_none=False)
+        website = Cleaner.text.tab_website(
+            website=website, with_validation=True, authorise_none=False
+        )
 
         # # website_list
         # website_list = [

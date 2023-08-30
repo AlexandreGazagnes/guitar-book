@@ -1,5 +1,5 @@
 """
-UrlManager : scrap url from song /author + tab + webiste google search
+UrlManager : scrap url from song /author + tab + website google search
 """
 
 import os, sys, time, logging
@@ -24,7 +24,7 @@ from src.cleaners import Cleaner
 
 
 class UrlManager:
-    """UrlManager : scrap url from song /author + tab + webiste google search
+    """UrlManager : scrap url from song /author + tab + website google search
 
     public methods:
         - run : preform all
@@ -49,7 +49,7 @@ class UrlManager:
 
         logging.debug("UrlManager._load_base")
 
-        website = Cleaner.txt.webiste(
+        website = Cleaner.text.tab_website(
             website, with_validation=True, authorise_none=True
         )
 
@@ -81,7 +81,7 @@ class UrlManager:
     ):
         """scrap url with finder_url_manager"""
 
-        website = Cleaner.txt.website(
+        website = Cleaner.text.tab_website(
             website, with_validation=True, authorise_none=False
         )
 
@@ -127,7 +127,7 @@ class UrlManager:
     ):
         """reload a entier base and update id / _url if neeeded, save final"""
 
-        website = Cleaner.txt.website(
+        website = Cleaner.text.tab_website(
             website, with_validation=True, authorise_none=False
         )
 

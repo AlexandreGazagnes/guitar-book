@@ -21,11 +21,11 @@ class TextCleaner:
         return chords
 
     @classmethod
-    def webiste(self, website, with_validation=True, authorise_none=False):
+    def tab_website(self, website, with_validation=True, authorise_none=False):
         """ """
 
         if with_validation:
-            Validator.website(website, authorise_none=authorise_none)
+            Validator.tab_website(website, authorise_none=authorise_none)
 
         if (not authorise_none) and (not website):
             raise AttributeError(

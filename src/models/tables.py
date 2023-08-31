@@ -27,7 +27,22 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-from src.models.base import Base
+# from src.models.base import Base, N_1, N_2, N_3, N_4
+
+N_1 = 10
+N_2 = 50
+N_3 = 100
+N_4 = 300
+
+
+class Base(DeclarativeBase):
+    """
+    # # Define the SQLAlchemy base class
+    # Base = declarative_base()
+    """
+
+    pass
+
 
 # from sqlalchemy import  (
 #     validate_email,
@@ -36,12 +51,6 @@ from src.models.base import Base
 #     validate_max_length,
 #     validate_min_length,
 # )
-
-
-N_1 = 10
-N_2 = 50
-N_3 = 100
-N_4 = 300
 
 
 # class User(Base):
@@ -61,7 +70,6 @@ class Source(Base):
     name: Mapped[str] = mapped_column(String(N_2))
     # possible values : ["boiteachansons", "ultimateguitar", "youtube"]
     base_url: Mapped[str] = mapped_column(String(N_2))
-
     comments: Mapped[str] = mapped_column(String(N_2))
 
 
@@ -70,7 +78,7 @@ class Artist(Base):
 
     __tablename__ = "artist"
 
-    id_artist: Mapped[int] = mapped_column(primary_key=True)
+    id_artist: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(N_2))
     alt_name: Mapped[str] = mapped_column(String(N_2))
     date_artist: Mapped[str] = mapped_column(Date)
@@ -94,12 +102,12 @@ class Song(Base):
 
     __tablename__ = "song"
 
-    id_song: Mapped[int] = mapped_column(primary_key=True)
+    id_song: Mapped[str] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(N_2))
     alt_title: Mapped[str] = mapped_column(String(N_2))
     date_song: Mapped[str] = mapped_column(Date)
 
-    lyrics: Mapped[str] = mapped_column(Text)
+    # lyrics: Mapped[str] = mapped_column(Text)
 
     comments: Mapped[str] = mapped_column(String(N_2))
 
@@ -112,14 +120,12 @@ class Version(Base):
 
     __tablename__ = "version"
 
-    id_version: Mapped[int] = mapped_column(primary_key=True)
+    id_version: Mapped[str] = mapped_column(primary_key=True)
     id_song: Mapped[int] = mapped_column(Integer, ForeignKey("song.id_song"))
     id_artist: Mapped[int] = mapped_column(Integer, ForeignKey("artist.id_artist"))
     date_version: Mapped[str] = mapped_column(Date)
 
     year: Mapped[int] = mapped_column(Integer)
-
-    #
     album: Mapped[str] = mapped_column(String(N_2))
 
     style: Mapped[str] = mapped_column(String(N_1))
@@ -140,7 +146,9 @@ class Submission(Base):
     __tablename__ = "submission"
 
     id_submission: Mapped[int] = mapped_column(primary_key=True)
-    id_version: Mapped[int] = mapped_column(Integer, ForeignKey("version.id_version"))
+    id_version: Mapped[str] = mapped_column(
+        String(N_3), ForeignKey("version.id_version")
+    )
     date_submission: Mapped[str] = mapped_column(Date)
 
     processed: Mapped[int] = mapped_column(Integer)
@@ -176,7 +184,7 @@ class Search(Base):
     _artist: Mapped[str] = mapped_column(String(N_2))
     _song: Mapped[str] = mapped_column(String(N_2))
 
-    # id_version: Mapped[int] = mapped_column(Integer, ForeignKey("version.id_version"))
+    # id_version: Mapped[str] = mapped_column(String(N_3), ForeignKey("version.id_version"))
 
     comments: Mapped[str] = mapped_column(String(N_2))
 
@@ -192,7 +200,7 @@ class Result(Base):
 
     url: Mapped[str] = mapped_column(String(N_4))
     filepath: Mapped[str] = mapped_column(String(N_4))
-    filename: Mapped = mapped_column(String(N_4))
+    filename: Mapped[str] = mapped_column(String(N_4))
 
     human_validation: Mapped[int] = mapped_column(Integer)
     retired: Mapped[int] = mapped_column(Integer)
@@ -201,10 +209,12 @@ class Result(Base):
         String(N_1)
     )  #  ["video", "audio", "lyrics", "tab"]
 
-    id_version: Mapped[int] = mapped_column(Integer, ForeignKey("version.id_version"))
+    id_version: Mapped[str] = mapped_column(
+        String(N_3), ForeignKey("version.id_version")
+    )
 
     # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
-    # id_version: Mapped[int] = mapped_column(Integer, ForeignKey("version.id_version"))
+    # id_version: Mapped[str] = mapped_column(String(N_3), ForeignKey("version.id_version"))
 
     comments: Mapped[str] = mapped_column(String(N_2))
 
@@ -215,7 +225,7 @@ class Tab(Base):
     __tablename__ = "tab"
 
     id_tab: Mapped[int] = mapped_column(primary_key=True)
-    id_result: Mapped[int] = mapped_column(Integer, ForeignKey("results.id_result"))
+    id_result: Mapped[int] = mapped_column(Integer, ForeignKey("result.id_result"))
     date_tab: Mapped[str] = mapped_column(Date)
 
     tab_type: Mapped[str] = mapped_column(String(N_1))  # raw cleaned final
@@ -224,7 +234,9 @@ class Tab(Base):
     filename: Mapped[str] = mapped_column(String(N_2))
 
     website: Mapped[str] = mapped_column(String(N_2))
-    id_version: Mapped[int] = mapped_column(Integer, ForeignKey("version.id_version"))
+    id_version: Mapped[str] = mapped_column(
+        String(N_3), ForeignKey("version.id_version")
+    )
     # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
     human_validation: Mapped[int] = mapped_column(Integer)
 
@@ -237,16 +249,51 @@ class AudioRecord(Base):
     __tablename__ = "audiorecord"
 
     id_audiorecord: Mapped[int] = mapped_column(primary_key=True)
-    id_result: Mapped[int] = mapped_column(Integer, ForeignKey("results.id_result"))
+    id_result: Mapped[int] = mapped_column(Integer, ForeignKey("result.id_result"))
     date_audiorecord: Mapped[str] = mapped_column(Date)
 
     filepath: Mapped[str] = mapped_column(String(N_2))
     filename: Mapped[str] = mapped_column(String(N_2))
 
-    id_version: Mapped[int] = mapped_column(Integer, ForeignKey("version.id_version"))
+    id_version: Mapped[str] = mapped_column(
+        String(N_3), ForeignKey("version.id_version")
+    )
     website: Mapped[str] = mapped_column(String(N_2))
 
     # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
     human_validation: Mapped[int] = mapped_column(Integer)
 
     comments: Mapped[str] = mapped_column(String(N_2))
+
+
+def make_engine(fn: str = "db_guitar_book.sqlite3", subfolder: str = "data"):
+    """Create an engine to interact with the database"""
+
+    # Create an SQLite database named "db.sqlite3"
+    cwd = os.getcwd()
+    # fn = "db.sqlite3"
+
+    # url = f"{cwd}/{fn}"
+
+    uri = os.path.join(cwd, subfolder, fn)
+    # db = os.path.join(cwd, fn)
+    database_uri = f"sqlite:///{uri}"
+
+    engine = create_engine(database_uri)
+    return engine
+
+
+def create_database():
+    """Create the database"""
+
+    engine = make_engine()
+    Base.metadata.create_all(engine)
+
+
+def create_session():
+    """Create a session to interact with the database"""
+
+    engine = make_engine()
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session

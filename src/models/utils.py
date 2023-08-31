@@ -41,35 +41,38 @@ N_3 = 100
 N_4 = 300
 
 
-def make_engine(fn: str = "db.sqlite3"):
-    """Create an engine to interact with the database"""
+# def make_engine(fn: str = "db.sqlite3"):
+#     """Create an engine to interact with the database"""
 
-    # Create an SQLite database named "db.sqlite3"
-    cwd = os.getcwd()
-    fn = "db.sqlite3"
+#     # Create an SQLite database named "db.sqlite3"
+#     cwd = os.getcwd()
+#     fn = "db.sqlite3"
 
-    # url = f"{cwd}/{fn}"
+#     # url = f"{cwd}/{fn}"
 
-    url = os.path.join(cwd, fn)
+#     url = os.path.join(cwd, fn)
 
-    # db = os.path.join(cwd, fn)
-    database_url = f"sqlite:///{url}"
+#     # db = os.path.join(cwd, fn)
+#     database_url = f"sqlite:///{url}"
 
-    engine = create_engine(database_url)
-    return engine
-
-
-def create_database(Base):
-    """Create the database"""
-
-    engine = make_engine()
-    Base.metadata.create_all(engine)
+#     engine = create_engine(database_url)
+#     return engine
 
 
-def create_session():
-    """Create a session to interact with the database"""
+# def create_database():
+#     """Create the database"""
 
-    engine = make_engine()
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    return session
+#     engine = make_engine()
+#     from src.models.base import Base
+#     from src.models.tables import Source, Artist
+
+#     Base.metadata.create_all(engine)
+
+
+# def create_session():
+#     """Create a session to interact with the database"""
+
+#     engine = make_engine()
+#     Session = sessionmaker(bind=engine)
+#     session = Session()
+#     return session

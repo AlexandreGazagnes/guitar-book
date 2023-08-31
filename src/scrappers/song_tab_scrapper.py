@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from googlesearch import search
 
 from src.helpers import now
-
+from src.validators import Validator
 
 # import time
 # import bs4
@@ -52,25 +52,31 @@ class SongTabScrapper:
                 "html_doc": "",
             }
 
-        # url not good website
-        if not url.startswith("https://www.boiteachansons"):
+        # valid website
+        try:
+            Validator.tab_url(url, authorise_none=False)
+        except Exception as e:
             logging.error(f"Not a valid website : {url}")
+            logging.error(e)
             return {
                 "url": url,
                 "status": 501,
-                "comment": f"url empty or not string : {url}, type {type(url)}",
+                "comment": f"url empty or not string : {url}, type {type(url)} ==> error is : {e}",
                 "date": now(),
                 "retired": -1,
                 "html_doc": "",
             }
 
-        # url not good route
-        if not "partition" in url:
-            logging.error(f"maybe not a valid url : {url}")
+        # valid pattern in url tab website
+        try:
+            Validator.tab_url_pattern(url)
+        except Exception as e:
+            logging.error(f"maybe not a valid pattern url : {url}")
+            logging.error(e)
             return {
                 "url": url,
                 "status": 502,
-                "comment": f"maybe not a valid url : {url} -- no partition",
+                "comment": f"maybe not a valid url : {url} -- no good patter. error : {e}",
                 "date": now(),
                 "retired": -1,
                 "html_doc": "",

@@ -1,6 +1,7 @@
 import os
-
 import logging
+import secrets
+import datetime
 
 # logging.basicConfig(
 #     encoding="utf-8",
@@ -9,23 +10,24 @@ import logging
 # )
 
 
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 import sqlalchemy
 import sqlalchemy as db
+from sqlalchemy import (
+    ForeignKey,
+    Table,
+    Column,
+    Integer,
+    String,
+    Date,
+    Text,
+    create_engine,
+)
 
-from sqlalchemy import ForeignKey
-from sqlalchemy import Table, Column, Integer, String, Date, Text, create_engine
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import declarative_base
-
-from sqlalchemy.orm import sessionmaker
-
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, declarative_base, sessionmaker
+from src.helpers import now
 
 # from src.models.base import Base, N_1, N_2, N_3, N_4
 
@@ -33,15 +35,6 @@ N_1 = 10
 N_2 = 50
 N_3 = 100
 N_4 = 300
-
-
-class Base(DeclarativeBase):
-    """
-    # # Define the SQLAlchemy base class
-    # Base = declarative_base()
-    """
-
-    pass
 
 
 # from sqlalchemy import  (
@@ -61,58 +54,135 @@ class Base(DeclarativeBase):
 #     email = Column(String(N_2))
 
 
+class Base(DeclarativeBase):
+    """
+    # # Define the SQLAlchemy base class
+    # Base = declarative_base()
+
+    OK
+    """
+
+    pass
+
+
+class Status(Base):
+    """Status Model
+
+    OK
+    """
+
+    __tablename__ = "_status"
+
+    # raw, cleaned, final
+    id_status: Mapped[str] = mapped_column(
+        String(N_1), primary_key=True, nullable=False, unique=True
+    )
+    status: Mapped[str] = mapped_column(String(N_1), nullable=False)
+
+    comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
+
+    def __repr__(self) -> str:
+        data = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
+        return str(data)
+
+
+class DataType(Base):
+    """data_type Model
+
+    OK
+    """
+
+    #  ["video", "audio", "lyrics", "tab"]
+    __tablename__ = "_datatype"
+
+    id_datatype: Mapped[str] = mapped_column(
+        String(N_1), primary_key=True, nullable=False, unique=True
+    )
+    datatype: Mapped[str] = mapped_column(String(N_1), nullable=False)
+
+    comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
+
+    def __repr__(self) -> str:
+        data = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
+        return str(data)
+
+
 class Source(Base):
-    """Source Model"""
+    """Source Model
 
-    __tablename__ = "source"
+    OK"""
 
-    id_source: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(N_2))
-    # possible values : ["boiteachansons", "ultimateguitar", "youtube"]
-    base_url: Mapped[str] = mapped_column(String(N_2))
-    comments: Mapped[str] = mapped_column(String(N_2))
+    # ultimate boite achanson, youtube, abcthabs, france tabs"
+    __tablename__ = "_source"
+
+    id_source: Mapped[str] = mapped_column(
+        String(N_2), primary_key=True, nullable=False, unique=True
+    )
+    source: Mapped[str] = mapped_column(String(N_2), nullable=False)
+
+    base_url: Mapped[str] = mapped_column(String(N_2), nullable=True)
+    comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
+
+    def __repr__(self) -> str:
+        data = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
+        return str(data)
 
 
 class Artist(Base):
-    """Artist Model"""
+    """Artist Model
+
+    OK
+    """
 
     __tablename__ = "artist"
 
-    id_artist: Mapped[str] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(N_2))
-    alt_name: Mapped[str] = mapped_column(String(N_2))
-    date_artist: Mapped[str] = mapped_column(Date)
+    id_artist: Mapped[str] = mapped_column(
+        String(N_2), primary_key=True, nullable=False, unique=True
+    )
+    name: Mapped[str] = mapped_column(String(N_2), nullable=False)
+    date_artist: Mapped[str] = mapped_column(
+        Date, nullable=False, default=datetime.datetime.now()
+    )
 
-    birthdate: Mapped[str] = mapped_column(Date)
-    deathdate: Mapped[str] = mapped_column(Date)
-    language: Mapped[str] = mapped_column(String(N_1))
-    country: Mapped[str] = mapped_column(String(N_1))
+    alt_name: Mapped[str] = mapped_column(String(N_2), nullable=True)
+    birthdate: Mapped[str] = mapped_column(Date, nullable=True)
+    deathdate: Mapped[str] = mapped_column(Date, nullable=True)
+    language: Mapped[str] = mapped_column(String(N_1), nullable=True)
+    country: Mapped[str] = mapped_column(String(N_1), nullable=True)
+    popularity: Mapped[int] = mapped_column(Integer, nullable=True)
+    style_1: Mapped[str] = mapped_column(String(N_1), nullable=True)
+    style_2: Mapped[str] = mapped_column(String(N_1), nullable=True)
+    style_3: Mapped[str] = mapped_column(String(N_1), nullable=True)
+    comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
 
-    popularity: Mapped[int] = mapped_column(Integer)
-
-    style_1: Mapped[str] = mapped_column(String(N_1))
-    style_2: Mapped[str] = mapped_column(String(N_1))
-    style_3: Mapped[str] = mapped_column(String(N_1))
-
-    comments: Mapped[str] = mapped_column(String(N_2))
+    def __repr__(self) -> str:
+        data = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
+        return str(data)
 
 
 class Song(Base):
-    """Song Model"""
+    """Song Model
+
+    OK
+    """
 
     __tablename__ = "song"
 
-    id_song: Mapped[str] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(N_2))
-    alt_title: Mapped[str] = mapped_column(String(N_2))
-    date_song: Mapped[str] = mapped_column(Date)
+    id_song: Mapped[str] = mapped_column(
+        String(N_2), primary_key=True, nullable=False, unique=True
+    )
+    title: Mapped[str] = mapped_column(String(N_2), nullable=False)
+    date_song: Mapped[str] = mapped_column(
+        Date, nullable=False, default=datetime.datetime.now()
+    )
 
+    alt_title: Mapped[str] = mapped_column(String(N_2), nullable=True)
     # lyrics: Mapped[str] = mapped_column(Text)
+    comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
 
-    comments: Mapped[str] = mapped_column(String(N_2))
-
-    # def __repr__(self) -> str:
-    #     return f"User(id={self.id!r}, name={self.name!r}, fullname={self.fullname!r})"
+    def __repr__(self) -> str:
+        data = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
+        return str(data)
 
 
 class Version(Base):
@@ -120,24 +190,33 @@ class Version(Base):
 
     __tablename__ = "version"
 
-    id_version: Mapped[str] = mapped_column(primary_key=True)
-    id_song: Mapped[int] = mapped_column(Integer, ForeignKey("song.id_song"))
-    id_artist: Mapped[int] = mapped_column(Integer, ForeignKey("artist.id_artist"))
-    date_version: Mapped[str] = mapped_column(Date)
+    id_version: Mapped[str] = mapped_column(
+        String(N_3), primary_key=True, nullable=False, unique=True
+    )
+    id_song: Mapped[str] = mapped_column(
+        String(N_2), ForeignKey("song.id_song"), nullable=False
+    )
+    id_artist: Mapped[str] = mapped_column(
+        String(N_2), ForeignKey("artist.id_artist"), nullable=False
+    )
+    date_version: Mapped[str] = mapped_column(
+        Date, nullable=False, default=datetime.datetime.now()
+    )
 
-    year: Mapped[int] = mapped_column(Integer)
-    album: Mapped[str] = mapped_column(String(N_2))
+    year: Mapped[int] = mapped_column(Integer, nullable=True)
+    album: Mapped[str] = mapped_column(String(N_2), nullable=True)
+    style: Mapped[str] = mapped_column(String(N_1), nullable=True)
+    popularity: Mapped[int] = mapped_column(Integer, nullable=True)
+    intensity: Mapped[int] = mapped_column(Integer, nullable=True)
+    mood: Mapped[str] = mapped_column(String(N_1), nullable=True)
+    bpm: Mapped[int] = mapped_column(Integer, nullable=True)
+    is_original: Mapped[int] = mapped_column(Integer, nullable=True)
+    is_live: Mapped[int] = mapped_column(Integer, nullable=True)
+    comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
 
-    style: Mapped[str] = mapped_column(String(N_1))
-    popularity: Mapped[int] = mapped_column(Integer)
-    intensity: Mapped[int] = mapped_column(Integer)
-    mood: Mapped[str] = mapped_column(String(N_1))
-    bpm: Mapped[int] = mapped_column(Integer)
-
-    is_original: Mapped[int] = mapped_column(Integer)
-    is_live: Mapped[int] = mapped_column(Integer)
-
-    comments: Mapped[str] = mapped_column(String(N_2))
+    def __repr__(self) -> str:
+        data = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}
+        return str(data)
 
 
 class Submission(Base):
@@ -145,125 +224,144 @@ class Submission(Base):
 
     __tablename__ = "submission"
 
-    id_submission: Mapped[int] = mapped_column(primary_key=True)
-    id_version: Mapped[str] = mapped_column(
-        String(N_3), ForeignKey("version.id_version")
-    )
-    date_submission: Mapped[str] = mapped_column(Date)
-
-    processed: Mapped[int] = mapped_column(Integer)
-    date_processed: Mapped[str] = mapped_column(Date)
-    result: Mapped[str] = mapped_column(String(N_1))
-
-    comments: Mapped[str] = mapped_column(String(N_2))
-
-
-class Search(Base):
-    """Search Base"""
-
-    __tablename__ = "search"
-
-    id_search: Mapped[int] = mapped_column(primary_key=True)
     id_submission: Mapped[int] = mapped_column(
-        Integer, ForeignKey("submission.id_submission")
-    )
-    date_search: Mapped[str] = mapped_column(Date)
-
-    id_source: Mapped[int] = mapped_column(
-        Integer, ForeignKey("source.id_source")
-    )  # boiteachansons, ultimateguitar, youtube
-    found: Mapped[int] = mapped_column(Integer)
-    is_alternative_version: Mapped[int] = mapped_column(Integer)
-
-    query: Mapped[str] = mapped_column(String(N_2))
-    engine: Mapped[str] = mapped_column(String(N_1))
-    data_type: Mapped[str] = mapped_column(
-        String(N_1)
-    )  #  ["video", "audio", "lyrics", "tab"]
-
-    _artist: Mapped[str] = mapped_column(String(N_2))
-    _song: Mapped[str] = mapped_column(String(N_2))
-
-    # id_version: Mapped[str] = mapped_column(String(N_3), ForeignKey("version.id_version"))
-
-    comments: Mapped[str] = mapped_column(String(N_2))
-
-
-class Result(Base):
-    """Results Base"""
-
-    __tablename__ = "result"
-
-    id_result: Mapped[int] = mapped_column(primary_key=True)
-    id_search: Mapped[int] = mapped_column(Integer, ForeignKey("search.id_search"))
-    date_result: Mapped[str] = mapped_column(Date)
-
-    url: Mapped[str] = mapped_column(String(N_4))
-    filepath: Mapped[str] = mapped_column(String(N_4))
-    filename: Mapped[str] = mapped_column(String(N_4))
-
-    human_validation: Mapped[int] = mapped_column(Integer)
-    retired: Mapped[int] = mapped_column(Integer)
-
-    data_type: Mapped[str] = mapped_column(
-        String(N_1)
-    )  #  ["video", "audio", "lyrics", "tab"]
-
+        Integer,
+        primary_key=True,
+        unique=True,
+        autoincrement=True,
+    )  # nullable=False, unique=True, autoincrement=True
     id_version: Mapped[str] = mapped_column(
-        String(N_3), ForeignKey("version.id_version")
+        String(N_3),
+        ForeignKey(
+            "version.id_version",
+        ),  # nullable=False
     )
-
-    # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
-    # id_version: Mapped[str] = mapped_column(String(N_3), ForeignKey("version.id_version"))
-
-    comments: Mapped[str] = mapped_column(String(N_2))
-
-
-class Tab(Base):
-    """Raw Tab Base"""
-
-    __tablename__ = "tab"
-
-    id_tab: Mapped[int] = mapped_column(primary_key=True)
-    id_result: Mapped[int] = mapped_column(Integer, ForeignKey("result.id_result"))
-    date_tab: Mapped[str] = mapped_column(Date)
-
-    tab_type: Mapped[str] = mapped_column(String(N_1))  # raw cleaned final
-
-    filepath: Mapped[str] = mapped_column(String(N_2))
-    filename: Mapped[str] = mapped_column(String(N_2))
-
-    website: Mapped[str] = mapped_column(String(N_2))
-    id_version: Mapped[str] = mapped_column(
-        String(N_3), ForeignKey("version.id_version")
+    date_submission: Mapped[str] = mapped_column(
+        Date, nullable=False, default=datetime.datetime.now()
     )
-    # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
-    human_validation: Mapped[int] = mapped_column(Integer)
+    processed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
-    comments: Mapped[str] = mapped_column(String(N_2))
+    date_processed: Mapped[str] = mapped_column(Date, nullable=True)
+    result: Mapped[str] = mapped_column(String(N_1), nullable=True)
+
+    comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
 
 
-class AudioRecord(Base):
-    """AudioRecord Base"""
+# class Search(Base):
+#     """Search Base"""
 
-    __tablename__ = "audiorecord"
+#     __tablename__ = "search"
 
-    id_audiorecord: Mapped[int] = mapped_column(primary_key=True)
-    id_result: Mapped[int] = mapped_column(Integer, ForeignKey("result.id_result"))
-    date_audiorecord: Mapped[str] = mapped_column(Date)
+#     id_search: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+#     id_submission: Mapped[int] = mapped_column(
+#         Integer, ForeignKey("submission.id_submission"), nullable=False
+#     )
+#     id_source: Mapped[str] = mapped_column(
+#         String(N_2), ForeignKey("_source.id_source"), nullable=False
+#     )
+#     id_version: Mapped[str] = mapped_column(
+#         String(N_3), ForeignKey("version.id_version"), nullable=False
+#     )
 
-    filepath: Mapped[str] = mapped_column(String(N_2))
-    filename: Mapped[str] = mapped_column(String(N_2))
+#     id_datatype: Mapped[str] = mapped_column(
+#         String(N_1), ForeignKey("_datatype.id_datatype"), nullable=False
+#     )
+#     date_search: Mapped[str] = mapped_column(
+#         Date, nullable=False, default=datetime.datetime.now()
+#     )
 
-    id_version: Mapped[str] = mapped_column(
-        String(N_3), ForeignKey("version.id_version")
-    )
-    website: Mapped[str] = mapped_column(String(N_2))
+#     found: Mapped[int] = mapped_column(Integer, nullable=True)
+#     is_alternative_version: Mapped[int] = mapped_column(Integer, nullable=True)
+#     query: Mapped[str] = mapped_column(String(N_2), nullable=True)
+#     engine: Mapped[str] = mapped_column(String(N_1), nullable=True)
+#     _artist: Mapped[str] = mapped_column(String(N_2), nullable=True)
+#     _song: Mapped[str] = mapped_column(String(N_2), nullable=True)
+#     comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
 
-    # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
-    human_validation: Mapped[int] = mapped_column(Integer)
 
-    comments: Mapped[str] = mapped_column(String(N_2))
+# class Result(Base):
+#     """Results Base"""
+
+#     __tablename__ = "result"
+
+#     id_result: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+#     id_search: Mapped[int] = mapped_column(
+#         Integer, ForeignKey("search.id_search"), nullable=False
+#     )
+#     id_version: Mapped[str] = mapped_column(
+#         String(N_3), ForeignKey("version.id_version"), nullable=False
+#     )
+#     id_datatype: Mapped[str] = mapped_column(String(N_1), nullable=True)
+#     id_source: Mapped[str] = mapped_column(
+#         String, ForeignKey("source.id_source"), nullable=False
+#     )
+#     date_result: Mapped[str] = mapped_column(
+#         Date, nullable=False, default=datetime.datetime.now()
+#     )
+
+#     url: Mapped[str] = mapped_column(String(N_4), nullable=True)
+#     # filepath: Mapped[str] = mapped_column(String(N_4), nullable=True)
+#     # filename: Mapped[str] = mapped_column(String(N_4), nullable=True)
+#     human_validation: Mapped[int] = mapped_column(Integer, nullable=True)
+#     retired: Mapped[int] = mapped_column(Integer, nullable=True)
+#     comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
+
+
+# class Tab(Base):
+#     """Raw Tab Base"""
+
+#     __tablename__ = "tab"
+
+#     id_tab: Mapped[int] = mapped_column(primary_key=True, nullable=False)
+#     id_result: Mapped[int] = mapped_column(
+#         Integer, ForeignKey("result.id_result"), nullable=False
+#     )
+#     id_version: Mapped[str] = mapped_column(
+#         String(N_3), ForeignKey("version.id_version"), nullable=False
+#     )
+#     id_source: Mapped[str] = mapped_column(
+#         String(N_1), ForeignKey("source.id_source"), nullable=False
+#     )
+#     id_status: Mapped[str] = mapped_column(
+#         String(N_1), ForeignKey("status.id_status"), nullable=False
+#     )
+#     date_tab: Mapped[str] = mapped_column(Date, nullable=False, default=datetime.datetime.now())
+
+#     filepath: Mapped[str] = mapped_column(String(N_2), nullable=False)
+#     filename: Mapped[str] = mapped_column(String(N_3), nullable=False)
+
+#     # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
+#     human_validation: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
+
+#     comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
+
+
+# class AudioRecord(Base):
+#     """AudioRecord Base"""
+
+#     __tablename__ = "audiorecord"
+
+#     id_audiorecord: Mapped[int] = mapped_column(primary_key=True, nullable=False)
+#     id_result: Mapped[int] = mapped_column(
+#         Integer, ForeignKey("result.id_result"), nullable=False
+#     )
+#     id_version: Mapped[str] = mapped_column(
+#         String(N_3), ForeignKey("version.id_version"), nullable=False
+#     )
+#     id_source: Mapped[str] = mapped_column(
+#         String(N_1), ForeignKey("source.id_source"), nullable=False
+#     )
+#     date_audiorecord: Mapped[str] = mapped_column(
+#         Date, nullable=False, default=datetime.datetime.now()
+#     )
+
+#     filepath: Mapped[str] = mapped_column(String(N_2), nullable=True)
+#     filename: Mapped[str] = mapped_column(String(N_3), nullable=True)
+
+#     # id_source: Mapped[int] = mapped_column(Integer, ForeignKey("source.id_source"))
+#     human_validation: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
+
+#     comments: Mapped[str] = mapped_column(String(N_2), nullable=True)
 
 
 def make_engine(fn: str = "db_guitar_book.sqlite3", subfolder: str = "data"):
@@ -297,3 +395,90 @@ def create_session():
     Session = sessionmaker(bind=engine)
     session = Session()
     return session
+
+
+def drop_all():
+    """Drop all tables"""
+
+    engine = make_engine()
+    Base.metadata.drop_all(engine)
+
+
+def boot_database():
+    """ """
+
+    source_data = [
+        "boiteachansons",
+        "ultimate-guitar",
+        "youtube",
+        "abctabs",
+        "france-tabs",
+    ]
+
+    status_data = ["raw", "cleaned", "final"]
+
+    datatype_data = ["video", "audio", "lyrics", "tab"]
+
+    # source
+    with create_session() as session:
+        for source in source_data:
+            s = Source(id_source=source, source=source)
+            session.add(s)
+            session.commit()
+
+    # status
+    with create_session() as session:
+        for status in status_data:
+            s = Status(id_status=status, status=status)
+            session.add(s)
+            session.commit()
+
+    # datatype
+    with create_session() as session:
+        for datatype in datatype_data:
+            s = DataType(id_datatype=datatype, datatype=datatype)
+            session.add(s)
+            session.commit()
+
+    # artist
+    artist = "test_artist" + " " + secrets.token_hex(4)
+    artist = Artist(id_artist=artist.replace(" ", "_"), name=artist)
+    with create_session() as session:
+        session.add(artist)
+        session.commit()
+
+    # song
+    song = "test_song" + " " + secrets.token_hex(4)
+    song = Song(id_song=song.replace(" ", "_"), title=song)
+    with create_session() as session:
+        session.add(song)
+        session.commit()
+
+    # version
+    with create_session() as session:
+        artist = "test_artist" + " " + secrets.token_hex(4)
+        artist = Artist(id_artist=artist.replace(" ", "_"), name=artist)
+
+        song = "test_song" + " " + secrets.token_hex(4)
+        song = Song(id_song=song.replace(" ", "_"), title=song)
+
+        version = "test_version" + " " + secrets.token_hex(4)
+        version = Version(
+            id_version=artist.id_artist + "___" + song.id_song + "___",
+            id_artist=artist.id_artist,
+            id_song=song.id_song,
+        )
+        session.add(artist)
+        session.add(song)
+        session.commit()
+
+        session.add(version)
+        session.commit()
+
+
+def reboot_database():
+    """ """
+
+    drop_all()
+    create_database()
+    boot_database()

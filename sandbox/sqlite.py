@@ -35,7 +35,7 @@ from sqlalchemy.orm import sessionmaker
 class User(Base):
     __tablename__ = "user"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String(30), primary_key=True, nullable=False)
     name = Column(String)
     phone = Column(String)
 
@@ -69,7 +69,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Example: Adding a user to the database
-new_user = User(name="John Doe", phone="123-456-7890")
+new_user = User(name="John Doe", phone="123-456-7890", id="123")
 session.add(new_user)
 session.commit()
 
